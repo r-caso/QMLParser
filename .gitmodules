@@ -1,0 +1,3 @@
+[submodule "third_party/QMLExpression"]
+	path = third_party/QMLExpression
+	url = git@github.com:r-caso/QMLExpression.git
