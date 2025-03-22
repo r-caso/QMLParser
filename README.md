@@ -100,6 +100,37 @@ Also:
 - identifiers and variables are characterized in the **Vocabulary** section above
 - the start rule for the parser is a ``sentence`` non-terminal, which is an alias for one of the rules above (by default, equivalence) --- see **Usage** for how to set `sentence` as an alias for a different EBNF rule.
 
+## Build and install
+
+The QMLParser library requires the [QMLExpression](https://github.com/r-caso/QMLExpression) library. To install it, follow the instructions in the README (notice that it need not be installed as a system library).
+
+Once you have a working installation of QMLExpression, to build the QMLParser library, navigate to the QMLParser root folder, and do the following:
+
+```bash
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
+
+If QMLExpression is not installed as a system library, you have to tell CMake. Instead of `cmake ..`, do:
+```bash
+cmake .. -DCMAKE_PREFIX_PATH=/path/to/QMLExpression
+```
+Or you can add the following key-value pair in the `cacheVariables` array of your `CMakePresets.json`:
+```
+"CMAKE_PREFIX_PATH" : "/path/to/QMLExpression"
+```
+
+To install QMLParser as a system library:
+```bash
+cmake --install .
+```
+To install QMLParser to a custom loction (non-system library):
+```bash
+cmake --install . --prefix /path/to/QMLExpression
+```
+
 ## Usage
 
 The QMLParser library has two main components:
