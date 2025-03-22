@@ -15,3 +15,63 @@ find_package(QMLExpression REQUIRED)
 
 add_subdirectory(QMLParser/qml-lexer)
 add_subdirectory(QMLParser/qml-parser)
+
+# Set up installation paths
+include(GNUInstallDirs)
+
+# Export targets
+install(TARGETS qml-lexer qml-parser
+    EXPORT QMLParserTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# Install the header files
+install(DIRECTORY QMLParser/qml-lexer/include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/QMLParser
+)
+install(DIRECTORY QMLParser/qml-parser/include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/QMLParser
+)
+
+# Export targets for use by other projects
+install(EXPORT QMLParserTargets
+    FILE QMLParserTargets.cmake
+    NAMESPACE QMLParser::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/QMLParser
+)
+
+# Create and install package configuration files
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/QMLParserConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+# Create QMLParserConfig.cmake.in
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/QMLParserConfig.cmake.in"
+"@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(QMLExpression REQUIRED)
+
+include(\"\${CMAKE_CURRENT_LIST_DIR}/QMLParserTargets.cmake\")
+check_required_components(QMLParser)
+")
+
+# Configure the config file
+configure_package_config_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/QMLParserConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/QMLParserConfig.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/QMLParser
+)
+
+# Install the config files
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/QMLParserConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/QMLParserConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/QMLParser
+)
