@@ -100,15 +100,6 @@ Also:
 - identifiers and variables are characterized in the **Vocabulary** section above
 - the start rule for the parser is a ``sentence`` non-terminal, which is an alias for one of the rules above (by default, equivalence) --- see **Usage** for how to set `sentence` as an alias for a different EBNF rule.
 
-## Overview
-
-QMLParser consists of two main components:
-
-- **qml-lexer**: Performs lexical analysis of QML content, transforming raw text into a sequence of tokens
-- **qml-parser**: Processes the tokens produced by the lexer to build a structured representation of QML content
-
-The library is built with C++23 and is designed to integrate easily with CMake-based projects.
-
 ## Dependencies
 
 - C++23 compatible compiler
@@ -169,6 +160,17 @@ The QMLParser library has two main components:
 - a *parser* that takes a `std::vector<Token>` as input, and returns a `Expression` object as output.
 
 The `Token` class is declared [here](QMLParser/include/token.hpp). The `Expression` objects are provided, as an external dependency, by the [QMLExpression library](https://github.com/r-caso/QMLExpression) (imported as a submodule of the project).
+
+The lexer and parser components can be accessed with the following include directives:
+```c++
+#include <QMLParser/lexer.hpp>
+#include <QMLParser/parser.hpp>
+```
+
+The QMLParser library also includes a convenience header that pulls in every function and class:
+```c++
+#include <QMLParser/QMLParser.hpp>
+```
 
 ### 1. Invoking the parser
 
@@ -290,9 +292,11 @@ if (result.has_value()) {
 ├── qml-lexer/             # Lexer functionality
 │   ├── include/           # Public headers
 │   └── src/               # Implementation files
-└── qml-parser/            # Parsing functionality
-    ├── include/           # Public headers
-    └── src/               # Implementation files
+├── qml-parser/            # Parsing functionality
+│   ├── include/           # Public headers
+│   └── src/               # Implementation files
+└── QMLParser/
+    └── include/           # convenience header
 ```
 
 ## Contributing
