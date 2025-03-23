@@ -18,13 +18,18 @@ add_subdirectory(qml-parser)
 
 add_library(QMLParser INTERFACE)
 target_link_libraries(QMLParser INTERFACE qml-lexer qml-parser)
+target_include_directories(QMLParser INTERFACE 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/qml-lexer/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/qml-parser/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 add_library(QMLParser::QMLParser ALIAS QMLParser)
 
 # Set up installation paths
 include(GNUInstallDirs)
 
 # Export targets
-install(TARGETS qml-lexer qml-parser
+install(TARGETS qml-lexer qml-parser QMLParser
     EXPORT QMLParserTargets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
