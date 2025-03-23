@@ -16,6 +16,10 @@ find_package(QMLExpression REQUIRED)
 add_subdirectory(qml-lexer)
 add_subdirectory(qml-parser)
 
+add_library(QMLParser INTERFACE)
+target_link_libraries(QMLParser INTERFACE qml-lexer qml-parser)
+add_library(QMLParser::QMLParser ALIAS QMLParser)
+
 # Set up installation paths
 include(GNUInstallDirs)
 
