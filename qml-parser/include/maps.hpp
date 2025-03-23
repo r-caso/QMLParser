@@ -2,7 +2,7 @@
 
 #include <optional>
 
-#include <expression.hpp>
+#include <QMLExpression/expression.hpp>
 
 #include "lexer.hpp"
 

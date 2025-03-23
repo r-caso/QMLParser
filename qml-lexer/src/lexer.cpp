@@ -3,12 +3,12 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-
-#include "expression.hpp"
 #include "lexer.hpp"
 
 #include <ranges>
 #include <unordered_map>
+
+#include <QMLExpression/expression.hpp>
 
 namespace iif_sadaf::talk::QMLParser {
 
