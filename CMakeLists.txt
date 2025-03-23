@@ -21,6 +21,7 @@ target_link_libraries(QMLParser INTERFACE qml-lexer qml-parser)
 target_include_directories(QMLParser INTERFACE 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/qml-lexer/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/qml-parser/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/QMLParser/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 add_library(QMLParser::QMLParser ALIAS QMLParser)
@@ -42,6 +43,9 @@ install(DIRECTORY qml-lexer/include/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/QMLParser
 )
 install(DIRECTORY qml-parser/include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/QMLParser
+)
+install(DIRECTORY QMLParser/include/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/QMLParser
 )
 
