@@ -13,8 +13,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(QMLExpression REQUIRED)
 
-add_subdirectory(QMLParser/qml-lexer)
-add_subdirectory(QMLParser/qml-parser)
+add_subdirectory(qml-lexer)
+add_subdirectory(qml-parser)
 
 # Set up installation paths
 include(GNUInstallDirs)
@@ -29,10 +29,10 @@ install(TARGETS qml-lexer qml-parser
 )
 
 # Install the header files
-install(DIRECTORY QMLParser/qml-lexer/include/
+install(DIRECTORY qml-lexer/include/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/QMLParser
 )
-install(DIRECTORY QMLParser/qml-parser/include/
+install(DIRECTORY qml-parser/include/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/QMLParser
 )
 

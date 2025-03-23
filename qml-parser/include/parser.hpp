@@ -12,7 +12,8 @@
 #include <vector>
 #include <string>
 
-#include "expression.hpp"
+#include <expression.hpp>
+
 #include "lexer.hpp"
 #include "maps.hpp"
 
