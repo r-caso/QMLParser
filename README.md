@@ -6,7 +6,7 @@ This library has been developed as part of my work as a Researcher at [IIF/SADAF
 
 ## Description
 
-The QML Parser library parses the language of Quantified Modal Logic under the following specification of **vocabulary** and **syntax**.
+The QMLParser library parses the language of Quantified Modal Logic under the following specification of **vocabulary** and **syntax**.
 
 ### 1. Vocabulary
 
@@ -100,15 +100,37 @@ Also:
 - identifiers and variables are characterized in the **Vocabulary** section above
 - the start rule for the parser is a ``sentence`` non-terminal, which is an alias for one of the rules above (by default, equivalence) --- see **Usage** for how to set `sentence` as an alias for a different EBNF rule.
 
-## Dependencies
+
+## Directory structure
+
+```
+/
+├── qml-lexer/             # Lexer functionality
+│   ├── include/           # Public headers
+│   └── src/               # Implementation files
+├── qml-parser/            # Parsing functionality
+│   ├── include/           # Public headers
+│   └── src/               # Implementation files
+└── QMLParser/
+    └── include/           # convenience header
+```
+
+## Build and install
+
+Clone the repository:
+```bash
+git clone git@github.com:r-caso/QMLParser.git
+```
+
+### Prerequisites
 
 - C++23 compatible compiler
 - CMake 3.22 or newer
 - [QMLExpression](https://github.com/r-caso/QMLExpression) library
 
-## Build and install
+Take notice that the QMLParser library requires the [QMLExpression](https://github.com/r-caso/QMLExpression) library. To install it, follow the instructions in the corresponding [README](https://github.com/r-caso/QMLParser/blob/main/README.md) (notice that it need not be installed as a system library).
 
-The QMLParser library requires the [QMLExpression](https://github.com/r-caso/QMLExpression) library. To install it, follow the instructions in the README (notice that it need not be installed as a system library).
+### Building
 
 Once you have a working installation of QMLExpression, to build the QMLParser library, navigate to the QMLParser root folder, and do the following:
 
@@ -128,6 +150,8 @@ Or you can add the following key-value pair in the `cacheVariables` array of you
 "CMAKE_PREFIX_PATH" : "/path/to/QMLExpression"
 ```
 
+### Installing
+
 To install QMLParser as a system library:
 ```bash
 cmake --install .
@@ -136,6 +160,10 @@ To install QMLParser to a custom loction (non-system library):
 ```bash
 cmake --install . --prefix /path/to/QMLExpression
 ```
+
+## Usage
+
+### Including in your project
 
 Once installed, you can use QMLParser in your CMake project in multiple ways:
 
@@ -152,9 +180,11 @@ target_link_libraries(your_target PRIVATE QMLParser::qml-lexer QMLParser::qml-pa
 target_link_libraries(your_target PRIVATE QMLParser::qml-lexer)
 ```
 
-## Usage
+If you have installed QMLParser as a non-system library, you should tell CMake where to find it. Use the `-DCMAKE_PREFIX_PATH=/path/to/QMLParser` flag for the command line interface, or the `"CMAKE_PREFIX_PATH" : "/path/to/QMLParser"` under `cacheVariables` in `CMakePresets.json`.
 
-The QMLParser library has two main components:
+### Lexing and parsing QML formulas
+
+The QMLParser library has several header files, but you will be mainly interested in the following two main components:
 
 - a *lexer* that takes a `std::string` as input and return a `std::vector<Token>` as output, and
 - a *parser* that takes a `std::vector<Token>` as input, and returns a `Expression` object as output.
@@ -247,56 +277,6 @@ std::expected<QMLExpr::Expression, std::string> result = QMLParser::Parser(token
 
 ```c++
 std::expected<QMLExpr::Expression, std::string> result = QMLParser::parse(formula, &QMLParser::Parser::implication, QMLParser::mapToEpistemicOperator);
-```
-
-### 3. Simple Usage Examples
-
-#### Lexical Analysis
-
-```cpp
-#include <QMLParser/lexer.hpp>
-#include <QMLParser/token.hpp>
-
-// Initialize the lexer with QML content
-const std::string formula = "∃x Walk(x)";
-const auto tokens = QMLParser::lex(formula);
-
-// Process tokens
-for (const auto& token : tokens) {
-    // Process each token
-}
-```
-
-#### Parsing
-
-```cpp
-#include <QMLParser/parser.hpp>
-
-// Parse a QML formula
-const std::string formula = "∀x (Human(x) → Mortal(x))";
-auto result = QMLParser::parse(formula);
-
-if (result.has_value()) {
-    // Work with the parsed expression
-    auto expression = result.value();
-    // ...
-} else {
-    std::cerr << "Parsing error: " << result.error() << std::endl;
-}
-```
-
-## Directory Structure
-
-```
-/
-├── qml-lexer/             # Lexer functionality
-│   ├── include/           # Public headers
-│   └── src/               # Implementation files
-├── qml-parser/            # Parsing functionality
-│   ├── include/           # Public headers
-│   └── src/               # Implementation files
-└── QMLParser/
-    └── include/           # convenience header
 ```
 
 ## Contributing
