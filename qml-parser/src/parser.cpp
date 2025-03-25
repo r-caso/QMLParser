@@ -8,20 +8,31 @@
 
 namespace iif_sadaf::talk::QMLParser {
 
+/**
+ * @brief Constructs a Parser instance.
+ * @param tokens The list of tokens to parse.
+ * @param mapFunc Function that maps tokens to modal operators (default: alethic logic).
+ */
 Parser::Parser(const std::vector<Token>& tokens, MappingFunction mapFunc)
     : m_Index(0), m_LookAhead(TokenType::NIL), m_TokenList(tokens), m_MapToOperator(mapFunc)
 {
     m_LookAhead = m_TokenList.empty() ? TokenType::EOI : m_TokenList.at(0).type;
 }
 
+/**
+ * @brief Parses the token stream into a QML expression.
+ * @param entryPoint The starting parse rule (default: equivalence).
+ * @return Parsed QML expression or an error message.
+ */
 std::expected<QMLExpression::Expression, std::string> Parser::parse(ParseFunction entryPoint)
 {
     if (m_TokenList.empty()) {
-        return std::unexpected("Got empty formula");
+        return std::unexpected("Empty input string, nothing to do");
     }
 
     return sentence(entryPoint);
 }
+
 
 void Parser::advance()
 {

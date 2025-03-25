@@ -13,6 +13,12 @@
 
 namespace iif_sadaf::talk::QMLParser {
 
+/**
+ * @brief Tokenizes a given QML formula.
+ *
+ * @param formula The input string representing a QML formula.
+ * @return A vector of `Token` objects.
+ */
 std::vector<Token> lex(const std::string& string);
 
 }

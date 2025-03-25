@@ -20,10 +20,26 @@
 
 namespace iif_sadaf::talk::QMLParser {
 
+/**
+ * @class Parser
+ * @brief Parses a sequence of tokens into a Quantified Modal Logic (QML) expression tree.
+ *
+ * This class implements a recursive descent parser for QML expressions. It processes a vector
+ * of tokens and constructs an abstract syntax tree (AST) representing a well-formed formula.
+ */
 class Parser
 {
 public:
+    /**
+     * @typedef ParseFunction
+     * @brief Defines the function signature for parsing rules.
+     */
     using ParseFunction = std::function<std::expected<QMLExpression::Expression, std::string>(Parser&)>;
+
+    /**
+     * @typedef MappingFunction
+     * @brief Maps token types to QML logical operators.
+     */
     using MappingFunction = std::function<std::optional<QMLExpression::Operator>(TokenType)>;
 
     Parser(const std::vector<Token>& tokens, MappingFunction mapFunc = mapToAlethicOperator);

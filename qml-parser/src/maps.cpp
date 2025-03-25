@@ -2,6 +2,11 @@
 
 namespace iif_sadaf::talk::QMLParser {
 
+/**
+ * @brief Maps token types to alethic modal operators.
+ * @param type The token type.
+ * @return The corresponding QMLExpression::Operator, or std::nullopt if the token is not a modal operator.
+ */
 std::optional<QMLExpression::Operator> mapToAlethicOperator(TokenType type) {
     switch (type) {
         case TokenType::NOT: return QMLExpression::Operator::NEGATION;
@@ -15,6 +20,11 @@ std::optional<QMLExpression::Operator> mapToAlethicOperator(TokenType type) {
     }
 }
 
+/**
+ * @brief Maps token types to deontic modal operators.
+ * @param type The token type.
+ * @return The corresponding QMLExpression::Operator, or std::nullopt if the token is not a modal operator.
+ */
 std::optional<QMLExpression::Operator> mapToDeonticOperator(TokenType type) {
     switch (type) {
         case TokenType::NOT: return QMLExpression::Operator::NEGATION;
@@ -28,6 +38,11 @@ std::optional<QMLExpression::Operator> mapToDeonticOperator(TokenType type) {
     }
 }
 
+/**
+ * @brief Maps token types to epistemic modal operators.
+ * @param type The token type.
+ * @return The corresponding QMLExpression::Operator, or std::nullopt if the token is not a modal operator.
+ */
 std::optional<QMLExpression::Operator> mapToEpistemicOperator(TokenType type) {
     switch (type) {
     case TokenType::NOT: return QMLExpression::Operator::NEGATION;
@@ -40,6 +55,5 @@ std::optional<QMLExpression::Operator> mapToEpistemicOperator(TokenType type) {
     default: return std::nullopt;
     }
 }
-
 
 }

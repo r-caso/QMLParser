@@ -10,6 +10,10 @@
 
 namespace iif_sadaf::talk::QMLParser {
 
+/**
+ * @enum TokenType
+ * @brief Represents different types of tokens used in the QMLParser.
+ */
 enum class TokenType : uint8_t {
     NIL, EOI, ILLEGAL,                          // parsing-related
     NOT, AND, OR, IF, EQ,                       // Logical operators
@@ -21,6 +25,10 @@ enum class TokenType : uint8_t {
     LPAREN, RPAREN, LBRACKET, RBRACKET, COMMA,  // punctuation
 };
 
+/**
+ * @struct Token
+ * @brief Represents a single lexical token.
+ */
 struct Token {
     Token(std::string literal, TokenType type);
 
