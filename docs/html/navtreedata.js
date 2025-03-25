@@ -25,33 +25,6 @@
 var NAVTREE =
 [
   [ "QMLParser", "index.html", [
-    [ "QML Parser", "md__r_e_a_d_m_e.html", [
-      [ "Description", "md__r_e_a_d_m_e.html#autotoc_md1", [
-        [ "Vocabulary", "md__r_e_a_d_m_e.html#autotoc_md2", [
-          [ "1.1. Non-logical symbols", "md__r_e_a_d_m_e.html#autotoc_md3", null ],
-          [ "1.2. Variables", "md__r_e_a_d_m_e.html#autotoc_md4", null ],
-          [ "1.3. Logical Symbols", "md__r_e_a_d_m_e.html#autotoc_md5", null ]
-        ] ],
-        [ "Syntax", "md__r_e_a_d_m_e.html#autotoc_md6", null ]
-      ] ],
-      [ "Directory structure", "md__r_e_a_d_m_e.html#autotoc_md7", null ],
-      [ "Build and install", "md__r_e_a_d_m_e.html#autotoc_md8", [
-        [ "Prerequisites", "md__r_e_a_d_m_e.html#autotoc_md9", null ],
-        [ "Building", "md__r_e_a_d_m_e.html#autotoc_md10", null ],
-        [ "Installing", "md__r_e_a_d_m_e.html#autotoc_md11", null ]
-      ] ],
-      [ "Usage", "md__r_e_a_d_m_e.html#autotoc_md12", [
-        [ "Including in your project", "md__r_e_a_d_m_e.html#autotoc_md13", null ],
-        [ "Lexing and parsing QML formulas", "md__r_e_a_d_m_e.html#autotoc_md14", null ],
-        [ "Invoking the parser", "md__r_e_a_d_m_e.html#autotoc_md15", null ],
-        [ "Parser configuration", "md__r_e_a_d_m_e.html#autotoc_md16", [
-          [ "2.1. Selecting the entry point", "md__r_e_a_d_m_e.html#autotoc_md17", null ],
-          [ "2.2. Customizing the Mapping Function", "md__r_e_a_d_m_e.html#autotoc_md18", null ]
-        ] ]
-      ] ],
-      [ "Contributing", "md__r_e_a_d_m_e.html#autotoc_md19", null ],
-      [ "License", "md__r_e_a_d_m_e.html#autotoc_md20", null ]
-    ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [

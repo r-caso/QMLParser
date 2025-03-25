@@ -1,18 +1,10 @@
 var searchData=
 [
-  ['id_0',['ID',['../namespaceiif__sadaf_1_1talk_1_1_q_m_l_parser.html#a32adc1bdecf41b3934977b82a4e313daab718adec73e04ce3ec720dd11a06a308',1,'iif_sadaf::talk::QMLParser']]],
-  ['identifier_1',['IDENTIFIER',['../namespaceiif__sadaf_1_1talk_1_1_q_m_l_parser.html#a32adc1bdecf41b3934977b82a4e313daa6fcc416051346daca31c571646af127a',1,'iif_sadaf::talk::QMLParser']]],
-  ['identity_2',['identity',['../classiif__sadaf_1_1talk_1_1_q_m_l_parser_1_1_parser.html#af64f0310d97f2bb16370c55aa4089cdc',1,'iif_sadaf::talk::QMLParser::Parser']]],
-  ['if_3',['IF',['../namespaceiif__sadaf_1_1talk_1_1_q_m_l_parser.html#a32adc1bdecf41b3934977b82a4e313daade6ee2b5d856295add4d5e3631fbfb93',1,'iif_sadaf::talk::QMLParser']]],
-  ['iif_5fsadaf_4',['iif_sadaf',['../namespaceiif__sadaf.html',1,'']]],
-  ['iif_5fsadaf_3a_3atalk_5',['talk',['../namespaceiif__sadaf_1_1talk.html',1,'iif_sadaf']]],
-  ['iif_5fsadaf_3a_3atalk_3a_3aqmlparser_6',['QMLParser',['../namespaceiif__sadaf_1_1talk_1_1_q_m_l_parser.html',1,'iif_sadaf::talk']]],
-  ['illegal_7',['ILLEGAL',['../namespaceiif__sadaf_1_1talk_1_1_q_m_l_parser.html#a32adc1bdecf41b3934977b82a4e313daa19b6dd9cf8414bce98a4f0b86c3258ec',1,'iif_sadaf::talk::QMLParser']]],
-  ['implication_8',['implication',['../classiif__sadaf_1_1talk_1_1_q_m_l_parser_1_1_parser.html#a92d31f40851c9ec921167a458f1d4c6c',1,'iif_sadaf::talk::QMLParser::Parser']]],
-  ['in_20your_20project_9',['Including in your project',['../md__r_e_a_d_m_e.html#autotoc_md13',1,'']]],
-  ['including_20in_20your_20project_10',['Including in your project',['../md__r_e_a_d_m_e.html#autotoc_md13',1,'']]],
-  ['inequality_11',['inequality',['../classiif__sadaf_1_1talk_1_1_q_m_l_parser_1_1_parser.html#a6c730547a4037ce8c6dd3b16004b07b4',1,'iif_sadaf::talk::QMLParser::Parser']]],
-  ['install_12',['Build and install',['../md__r_e_a_d_m_e.html#autotoc_md8',1,'']]],
-  ['installing_13',['Installing',['../md__r_e_a_d_m_e.html#autotoc_md11',1,'']]],
-  ['invoking_20the_20parser_14',['1. Invoking the parser',['../md__r_e_a_d_m_e.html#autotoc_md15',1,'']]]
+  ['parse_0',['parse',['../classiif__sadaf_1_1talk_1_1_q_m_l_parser_1_1_parser.html#a9d6abe88e2b254588a53ad5636d6ddfc',1,'iif_sadaf::talk::QMLParser::Parser::parse()'],['../namespaceiif__sadaf_1_1talk_1_1_q_m_l_parser.html#a9e654b56a74a6e1b501e443930a8ec6e',1,'iif_sadaf::talk::QMLParser::parse(const std::string &amp;formula, Parser::ParseFunction entryPoint=&amp;Parser::equivalence, Parser::MappingFunction mappingFunction=&amp;mapToAlethicOperator)'],['../namespaceiif__sadaf_1_1talk_1_1_q_m_l_parser.html#ad6e721ca9cfd8c0bf2206023522fa345',1,'iif_sadaf::talk::QMLParser::parse(const std::string &amp;formula, Parser::MappingFunction mappingFunction)']]],
+  ['parsefunction_1',['ParseFunction',['../classiif__sadaf_1_1talk_1_1_q_m_l_parser_1_1_parser.html#a156212e9872e5a322cabd036328c494c',1,'iif_sadaf::talk::QMLParser::Parser']]],
+  ['parser_2',['Parser',['../classiif__sadaf_1_1talk_1_1_q_m_l_parser_1_1_parser.html',1,'iif_sadaf::talk::QMLParser::Parser'],['../classiif__sadaf_1_1talk_1_1_q_m_l_parser_1_1_parser.html#a5050036d294684e22507f215a16da621',1,'iif_sadaf::talk::QMLParser::Parser::Parser()']]],
+  ['parser_2ecpp_3',['parser.cpp',['../parser_8cpp.html',1,'']]],
+  ['parser_2ehpp_4',['parser.hpp',['../parser_8hpp.html',1,'']]],
+  ['pos_5',['POS',['../namespaceiif__sadaf_1_1talk_1_1_q_m_l_parser.html#a32adc1bdecf41b3934977b82a4e313daa1903f54cd46d54aa3200a4508c948db0',1,'iif_sadaf::talk::QMLParser']]],
+  ['predication_6',['predication',['../classiif__sadaf_1_1talk_1_1_q_m_l_parser_1_1_parser.html#aa4aace6f345bf40eb00490ccd51d339d',1,'iif_sadaf::talk::QMLParser::Parser']]]
 ];

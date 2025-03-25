@@ -1,9 +1,5 @@
 var searchData=
 [
-  ['2_201_20selecting_20the_20entry_20point_0',['2.1. Selecting the entry point',['../md__r_e_a_d_m_e.html#autotoc_md17',1,'']]],
-  ['2_202_20customizing_20the_20mapping_20function_1',['2.2. Customizing the Mapping Function',['../md__r_e_a_d_m_e.html#autotoc_md18',1,'']]],
-  ['2_20customizing_20the_20mapping_20function_2',['2.2. Customizing the Mapping Function',['../md__r_e_a_d_m_e.html#autotoc_md18',1,'']]],
-  ['2_20parser_20configuration_3',['2. Parser configuration',['../md__r_e_a_d_m_e.html#autotoc_md16',1,'']]],
-  ['2_20syntax_4',['2. Syntax',['../md__r_e_a_d_m_e.html#autotoc_md6',1,'']]],
-  ['2_20variables_5',['1.2. Variables',['../md__r_e_a_d_m_e.html#autotoc_md4',1,'']]]
+  ['comma_0',['COMMA',['../namespaceiif__sadaf_1_1talk_1_1_q_m_l_parser.html#a32adc1bdecf41b3934977b82a4e313daa4d9b3e9fc12849d060371eb65154c751',1,'iif_sadaf::talk::QMLParser']]],
+  ['conjunction_5fdisjunction_1',['conjunction_disjunction',['../classiif__sadaf_1_1talk_1_1_q_m_l_parser_1_1_parser.html#a72a5cd4dfe13878e8a20e3d26b0a3f60',1,'iif_sadaf::talk::QMLParser::Parser']]]
 ];
