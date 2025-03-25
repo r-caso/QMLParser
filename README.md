@@ -1,6 +1,6 @@
 ﻿# QML Parser
 
-A recursive descent parser for Quantified Modal Logic.
+A recursive descent parser for the language of Quantified Modal Logic.
 
 This library has been developed as part of my work as a Researcher at [IIF/SADAF/CONICET](https://iif.conicet.gov.ar/?lan=en) and as member of the [Talk Group](https://talk-group.org/).
 
