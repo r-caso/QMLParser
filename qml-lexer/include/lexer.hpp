@@ -19,6 +19,6 @@ namespace iif_sadaf::talk::QMLParser {
  * @param formula The input string representing a QML formula.
  * @return A vector of `Token` objects.
  */
-std::vector<Token> lex(const std::string& string);
+std::vector<Token> lex(const std::string& formula);
 
 }

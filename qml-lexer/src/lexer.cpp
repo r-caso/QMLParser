@@ -76,10 +76,10 @@ namespace {
         }
 
         if (isVariable(token)) {
-            list.push_back(Token(token, TokenType::VARIABLE));
+            list.emplace_back(token, TokenType::VARIABLE);
         }
         else {
-            list.push_back(Token(token, TokenType::IDENTIFIER));
+            list.emplace_back(token, TokenType::IDENTIFIER);
         }
         token.clear();
     }
@@ -91,10 +91,10 @@ namespace {
         }
 
         std::string token_str;
-        for (uint8_t c : token_byte_array) {
+        for (uint8_t const c : token_byte_array) {
             token_str.push_back(c);
         }
-        list.push_back(Token(token_str, type));
+        list.emplace_back(token_str, type);
         token_byte_array.clear();
     }
 
@@ -121,7 +121,7 @@ std::vector<Token> lex(const std::string& formula)
     };
     const auto addToList = [&](const std::string& literal, TokenType type) -> void {
         flush(TokenType::ILLEGAL);
-        list.push_back({ literal, type });
+        list.emplace_back(literal, type);
     };
     const auto initOp = [&](uint8_t curr) -> void {
         flush(TokenType::ILLEGAL);
@@ -132,7 +132,7 @@ std::vector<Token> lex(const std::string& formula)
             operator_byte_array.push_back(curr);
         }
         else {
-            list.push_back(Token("illegal", TokenType::ILLEGAL));
+            list.emplace_back("illegal", TokenType::ILLEGAL);
             operator_byte_array.clear();
         }
     };
@@ -142,7 +142,7 @@ std::vector<Token> lex(const std::string& formula)
             writeToTokenList(operator_byte_array, type, list);
         }
         else {
-            list.push_back(Token("illegal", TokenType::ILLEGAL));
+            list.emplace_back("illegal", TokenType::ILLEGAL);
             operator_byte_array.clear();
         }
     };
@@ -245,13 +245,13 @@ std::vector<Token> lex(const std::string& formula)
                     writeToTokenList(operator_byte_array, TokenType::POS, list);
                     break;
                 default:
-                    list.push_back(Token("illegal", TokenType::ILLEGAL));
+                    list.emplace_back(Token("illegal", TokenType::ILLEGAL));
                     operator_byte_array.clear();
                     break;
                 }
             }
             else {
-                list.push_back(Token("illegal", TokenType::ILLEGAL));
+                list.emplace_back(Token("illegal", TokenType::ILLEGAL));
                 operator_byte_array.clear();
             }
         }
@@ -299,7 +299,7 @@ std::vector<Token> lex(const std::string& formula)
 
         else if (c == '=') {
             flush(TokenType::ILLEGAL);
-            list.push_back(Token("=", TokenType::ID));
+            list.emplace_back(Token("=", TokenType::ID));
         }
 
         else if (isValidIdentifierSymbol(c)) {
@@ -307,13 +307,13 @@ std::vector<Token> lex(const std::string& formula)
         }
 
         else {
-            list.push_back(Token("illegal", TokenType::ILLEGAL));
+            list.emplace_back(Token("illegal", TokenType::ILLEGAL));
         }
     }
 
     flush(TokenType::ILLEGAL);
 
-    list.push_back(Token("$", TokenType::EOI));
+    list.emplace_back("$", TokenType::EOI);
 
     return list;
 }
