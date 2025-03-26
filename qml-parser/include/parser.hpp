@@ -43,7 +43,7 @@ public:
     using MappingFunction = std::function<std::optional<QMLExpression::Operator>(TokenType)>;
 
     Parser(const std::vector<Token>& tokens, MappingFunction mapFunc = mapToAlethicOperator);
-    std::expected<QMLExpression::Expression, std::string> parse(ParseFunction entryPoint = &equivalence);
+    std::expected<QMLExpression::Expression, std::string> parse(ParseFunction entryPoint = &Parser::equivalence);
 
     // rules
     std::expected<QMLExpression::Expression, std::string> equivalence();
@@ -60,7 +60,7 @@ private:
     TokenType peek(int offset = 0) const;
 
     // start rule
-    std::expected<QMLExpression::Expression, std::string> sentence(ParseFunction entryPoint = &equivalence);
+    std::expected<QMLExpression::Expression, std::string> sentence(ParseFunction entryPoint = &Parser::equivalence);
 
     int m_Index;
     TokenType m_LookAhead;
