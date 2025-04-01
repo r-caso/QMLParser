@@ -73,7 +73,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::sentence()
     }
     
     if (peek() != TokenType::EOI) {
-        return std::unexpected(std::format("Unexpected symbol: {}", m_TokenList.at(m_Index).literal));
+        return std::unexpected(std::format("Unexpected symbol ({})", getToken(m_Index).literal));
     }
 
     return result.value();
@@ -92,13 +92,15 @@ std::expected<QMLExpression::Expression, std::string> Parser::equivalence()
         advance(); // consume equivalence
         const auto result = implication();
         if (!result.has_value()) {
-            return std::unexpected(result.error());
+            return std::unexpected(std::format("Expected clause after '↔' but got : {}", result.error()));
         }
         QMLExpression::Expression rhs = result.value();
         if (const auto op = m_MapToOperator(TokenType::EQ)) {
             lhs = std::make_shared<QMLExpression::BinaryNode>(*op, lhs, rhs);
         }
-        return std::unexpected("Unrecognized binary operator");
+        else {
+            return std::unexpected("Non-existent map for token type EQ (↔)");
+    }
     }
 
     return lhs;
@@ -117,13 +119,15 @@ std::expected<QMLExpression::Expression, std::string> Parser::implication()
         advance(); // consume implication
         const auto result = conjunction_disjunction();
         if (!result.has_value()) {
-            return std::unexpected(result.error());
+            return std::unexpected(std::format("Expected clause after '→' but got : {}", result.error()));
         }
         QMLExpression::Expression rhs = result.value();
         if (const auto op = m_MapToOperator(TokenType::IF)) {
             lhs = std::make_shared<QMLExpression::BinaryNode>(*op, lhs, rhs);
         }
-        return std::unexpected("Unrecognized binary operator.");
+        else {
+            return std::unexpected("Non-existent map for token type IMP (→)");
+    }
     }
 
     return lhs;
@@ -139,17 +143,20 @@ std::expected<QMLExpression::Expression, std::string> Parser::conjunction_disjun
     QMLExpression::Expression lhs = result.value();
 
     while (peek() == TokenType::OR || peek() == TokenType::AND) {
-        const auto op = m_TokenList.at(m_Index).type == TokenType::OR ? m_MapToOperator(TokenType::OR) : m_MapToOperator(TokenType::AND);
+        // Identify operator
+        const auto currentToken = getToken(m_Index);
+        const auto op = currentToken.type == TokenType::OR ? m_MapToOperator(TokenType::OR) : m_MapToOperator(TokenType::AND);
+        const std::string opName = currentToken.type == TokenType::OR ? "OR (∨)" : "AND (∧)";
 
         if (!op.has_value()) {
-            return std::unexpected("Unrecognized binary operator: " + m_TokenList.at(m_Index).literal);
+            return std::unexpected(std::format("Non-existent map for token type {}", opName));
         }
 
         advance(); // consume operator
 
         const auto result = clause();
         if (!result.has_value()) {
-            return std::unexpected(result.error());
+            return std::unexpected(std::format("Expected clause after '{}' but got : {}", currentToken.literal, result.error()));
         }
 
         QMLExpression::Expression rhs = result.value();
@@ -216,7 +223,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::clause()
             return std::unexpected(result.error());
         }
         if (peek() != TokenType::RPAREN) {
-            return std::unexpected(std::format("Expected ')' but got '{}'", m_TokenList.at(m_Index).literal));
+            return std::unexpected(std::format("Expected ')' after '{}' but got '{}'", currentToken.literal, getToken(m_Index).literal));
         }
         advance();
         return result.value();
@@ -229,13 +236,13 @@ std::expected<QMLExpression::Expression, std::string> Parser::clause()
             return std::unexpected(result.error());
         }
         if (peek() != TokenType::RBRACKET) {
-            return std::unexpected(std::format("Expected ']' but got '{}'", m_TokenList.at(m_Index).literal));
+            return std::unexpected(std::format("Expected ']' after '{}' but got '{}'", currentToken.literal, getToken(m_Index).literal));
         }
         advance();
         return result.value();
     }
 
-    return std::unexpected(error_message);
+    return std::unexpected(std::format("Unexpected token ({})", currentToken.literal));
 }
 
 std::expected<QMLExpression::Expression, std::string> Parser::quantificational()
@@ -245,7 +252,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::quantificational()
     }
 
     if (peek(1) != TokenType::VARIABLE) {
-        return std::unexpected(std::format("Expected variable after quantifier but got '{}'", m_TokenList.at(m_Index + 1).literal));
+        return std::unexpected(std::format("Expected variable after '{}' but got '{}'", getToken(m_Index).literal, getToken(m_Index + 1).literal));
     }
 
     QMLExpression::Quantifier quantifier = m_TokenList.at(m_Index).type == TokenType::FORALL ? QMLExpression::Quantifier::UNIVERSAL : QMLExpression::Quantifier::EXISTENTIAL;
@@ -269,7 +276,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::quantificational()
         if (const auto op = m_MapToOperator(TokenType::NOT)) {
             return std::make_shared<QMLExpression::UnaryNode>(*op, quantified);
         }
-        return std::unexpected("Non-existent map for token type NOT");
+        return std::unexpected("Non-existent map for token type NOT (¬)");
     }
 
     return quantified;
@@ -281,9 +288,13 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
         return std::unexpected("");
     }
 
-    const auto op = m_TokenList.at(m_Index).type == TokenType::NOT ? m_MapToOperator(TokenType::NOT) :
-        m_TokenList.at(m_Index).type == TokenType::POS ? m_MapToOperator(TokenType::POS) :
+    const auto currentToken = getToken(m_Index);
+    const auto op = currentToken.type == TokenType::NOT ? m_MapToOperator(TokenType::NOT) :
+                    currentToken.type == TokenType::POS ? m_MapToOperator(TokenType::POS) :
         m_MapToOperator(TokenType::NEC);
+    const std::string opName = currentToken.type == TokenType::NOT ? "NOT (¬)" :
+                               currentToken.type == TokenType::POS ? "POS (⋄)" :
+                                                                     "NEC (□)";
 
     if (!op.has_value()) {
         return std::unexpected(std::format("Non-existent map for unary operator {}", m_TokenList.at(m_Index).literal));
@@ -293,7 +304,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
 
     const auto result = clause();
     if (!result.has_value()) {
-        return std::unexpected("Expected clause after unary operator");
+        return std::unexpected(std::format("Expected clause after unary operator {}", opName));
     }
 
     return std::make_shared<QMLExpression::UnaryNode>(*op, result.value());
@@ -324,7 +335,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::atomic()
         error_message += result.error();
     }
 
-    return std::unexpected(error_message);
+    return std::unexpected(std::format("Expected '(', '=', or '≠' after '{}' but got '{}'", getToken(m_Index).literal, getToken(m_Index + 1).literal));
 }
 
 std::expected<QMLExpression::Expression, std::string> Parser::predication()
@@ -337,12 +348,12 @@ std::expected<QMLExpression::Expression, std::string> Parser::predication()
         return std::unexpected("");
     }
 
-    if (peek(2) != TokenType::IDENTIFIER && peek(2) != TokenType::VARIABLE) {
-        return std::unexpected(std::format("Expected term after '(' but got '{}'", m_TokenList.at(m_Index + 2).literal));
+    if (!isTerm(peek(2))) {
+        return std::unexpected(std::format("Expected term after '(' but got '{}'", getToken(m_Index + 2).literal));
     }
 
     if (peek(3) != TokenType::RPAREN && peek(3) != TokenType::COMMA) {
-        return std::unexpected(std::format("Expected ',' or ')' after term '{}' but got '{}'", m_TokenList.at(m_Index + 2).literal, m_TokenList.at(m_Index + 3).literal));
+        return std::unexpected(std::format("Expected ',' or ')' after term '{}' but got '{}'", getToken(m_Index + 2).literal, getToken(m_Index + 3).literal));
     }
 
     const int backtracking_point = m_Index;
@@ -361,7 +372,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::predication()
 
     while (peek() == TokenType::COMMA) {
         if (peek(1) != TokenType::IDENTIFIER && peek(1) != TokenType::VARIABLE) {
-            const std::string error_string = std::format("Expected term after ',' but got '{}'", m_TokenList.at(m_Index + 1).literal);
+            const std::string error_string = std::format("Expected term after ',' but got '{}'", getToken(m_Index + 1).literal);
             m_Index = backtracking_point;
             m_LookAhead = m_TokenList.at(m_Index).type;
             return std::unexpected(error_string);
@@ -376,7 +387,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::predication()
     }
 
     if (peek() != TokenType::RPAREN) {
-        const std::string error_string = std::format("Expected ')' after argument list but got '{}'", m_TokenList.at(m_Index).literal);
+        const std::string error_string = std::format("Expected ')' after argument list but got '{}'", getToken(m_Index).literal);
         m_Index = backtracking_point;
         m_LookAhead = m_TokenList.at(m_Index).type;
         return std::unexpected(error_string);
@@ -398,7 +409,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::identity()
     }
 
     if (peek(2) != TokenType::IDENTIFIER && peek(2) != TokenType::VARIABLE) {
-        return std::unexpected(std::format("Expected singular term in RHS of '=' but got '{}'", m_TokenList.at(m_Index + 2).literal));
+        return std::unexpected(std::format("Expected singular term in RHS of '=' but got '{}'", getToken(m_Index + 2).literal));
     }
 
     QMLExpression::Term::Type type = m_TokenList.at(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
@@ -426,7 +437,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::inequality()
     }
 
     if (peek(2) != TokenType::IDENTIFIER && peek(2) != TokenType::VARIABLE) {
-        return std::unexpected(std::format("Expected singular term in RHS of '≠' but got '{}'", m_TokenList.at(m_Index + 1).literal));
+        return std::unexpected(std::format("Expected singular term in RHS of '≠' but got '{}'", getToken(m_Index + 1).literal));
     }
 
     QMLExpression::Term::Type type = m_TokenList.at(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
@@ -444,7 +455,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::inequality()
     if (const auto op = m_MapToOperator(TokenType::NOT)) {
         return std::make_shared<QMLExpression::UnaryNode>(*op, id);
     }
-    return std::unexpected("Non-existent map for token type NOT\n");
+    return std::unexpected("Non-existent map for token type NOT (¬)");
 }
 
 std::expected<QMLExpression::Expression, std::string> parse(const std::string& formula, Parser::ParseFunction entryPoint, Parser::MappingFunction mapFunction)
