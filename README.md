@@ -70,24 +70,26 @@ The lexer recognizes the following logical symbols:
 
 The QML Parser implements the following EBNF grammar for QML:
 
-| NON-TERMINAL |    |    DEFINITION                            | 
-|--------------|----|------------------------------------------|
-| equivalence  | =  | implication, {"↔", implication}          |
-| implication  | =  | con_dis, {"→", con_dis}                  |
-| con_dis      | =  | unary, {"∧", unary}                     |
-|              | \| | unary, {"∨", unary}                     |
-| unary        | =  | atomic                                   |
-|              | \| | "¬"\|"□"\|"⋄", unary                     |
-|              | \| | "∀"\|"∃"\|"∄", variable, unary          |
-|              | \| | "(", equivalence, ")"                    |
-|              | \| | "[", equivalence, "]"                    |
-| atomic       | =  | predication                              |
-|              | \| | identity                                 |
-|              | \| | inequality                               |
-| predication  | =  | identifier, "(", term, {", ", term}, ")" |
-| identity     | =  | term, "=", term                          |
-| inequality   | =  | term, "≠", term                          |
-| term         | =  | identifier\|variable                     |
+|   NON-TERMINAL   |    |              DEFINITION                  | 
+|------------------|----|------------------------------------------|
+| equivalence      | =  | implication, {"↔", implication}          |
+| implication      | =  | con_dis, {"→", con_dis}                  |
+| con_dis          | =  | clause, {"∧", clause}                   |
+|                  | \| | clause, {"∨", clause}                   |
+| clause           | =  | atomic                                   |
+|                  | \| | unary                                    |
+|                  | \| | quantificational                         |
+|                  | \| | "(", equivalence, ")"                    |
+|                  | \| | "[", equivalence, "]"                    |
+| quantificational | =  | "∀"\|"∃"\|"∄", variable, clause         |
+| unary            | =  | "¬"\|"□"\|"⋄", clause                    | 
+| atomic           | =  | predication                              |
+|                  | \| | identity                                 |
+|                  | \| | inequality                               |
+| predication      | =  | identifier, "(", term, {", ", term}, ")" |
+| identity         | =  | term, "=", term                          |
+| inequality       | =  | term, "≠", term                          |
+| term             | =  | identifier\|variable                     |
 
 A few notes on the parser implementation of this grammar:
 
@@ -125,7 +127,7 @@ git clone git@github.com:r-caso/QMLParser.git
 ### Prerequisites
 
 - C++23 compatible compiler
-- CMake 3.22 or newer
+- CMake 3.25 or newer
 - [QMLExpression](https://github.com/r-caso/QMLExpression) library
 
 Take notice that the QMLParser library requires the [QMLExpression](https://github.com/r-caso/QMLExpression) library. To install it, follow the instructions in the corresponding [README](https://github.com/r-caso/QMLParser/blob/main/README.md) (notice that it need not be installed as a system library).
