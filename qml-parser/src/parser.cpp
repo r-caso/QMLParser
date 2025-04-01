@@ -228,7 +228,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::clause()
 
 std::expected<QMLExpression::Expression, std::string> Parser::quantificational()
 {
-    if (peek() != TokenType::FORALL && peek() != TokenType::EXISTS && peek() != TokenType::NOT_EXISTS) {
+    if (!isQuantifier(peek())) {
         return std::unexpected("");
     }
 
@@ -236,12 +236,12 @@ std::expected<QMLExpression::Expression, std::string> Parser::quantificational()
         return std::unexpected(std::format("Expected variable after '{}' but got '{}'", getToken(m_Index).literal, getToken(m_Index + 1).literal));
     }
 
-    QMLExpression::Quantifier quantifier = m_TokenList.at(m_Index).type == TokenType::FORALL ? QMLExpression::Quantifier::UNIVERSAL : QMLExpression::Quantifier::EXISTENTIAL;
-    const bool negated = m_TokenList.at(m_Index).type == TokenType::NOT_EXISTS;
+    QMLExpression::Quantifier quantifier = getToken(m_Index).type == TokenType::FORALL ? QMLExpression::Quantifier::UNIVERSAL : QMLExpression::Quantifier::EXISTENTIAL;
+    const bool negated = getToken(m_Index).type == TokenType::NOT_EXISTS;
 
     advance(); // consume quantifier
 
-    QMLExpression::Term variable(m_TokenList.at(m_Index).literal, QMLExpression::Term::Type::VARIABLE);
+    QMLExpression::Term variable(getToken(m_Index).literal, QMLExpression::Term::Type::VARIABLE);
 
     advance(); // consume variable
 
@@ -332,30 +332,30 @@ std::expected<QMLExpression::Expression, std::string> Parser::predication()
 
     const int backtracking_point = m_Index;
 
-    std::string predicate = m_TokenList.at(m_Index).literal;
+    std::string predicate = getToken(m_Index).literal;
     
     advance(); // consume predicate
     advance(); // consume LPAREN
 
     std::vector<QMLExpression::Term> arguments;
 
-    QMLExpression::Term::Type type = m_TokenList.at(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
-    arguments.push_back({ m_TokenList.at(m_Index).literal, type });
+    QMLExpression::Term::Type type = getToken(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
+    arguments.push_back({ getToken(m_Index).literal, type });
 
     advance(); // consume first argument
 
     while (peek() == TokenType::COMMA) {
-        if (peek(1) != TokenType::IDENTIFIER && peek(1) != TokenType::VARIABLE) {
+        if (!isTerm(peek(1))) {
             const std::string error_string = std::format("Expected term after ',' but got '{}'", getToken(m_Index + 1).literal);
             m_Index = backtracking_point;
-            m_LookAhead = m_TokenList.at(m_Index).type;
+            m_LookAhead = getToken(m_Index).type;
             return std::unexpected(error_string);
         }
 
         advance(); // consume comma
 
-        QMLExpression::Term::Type type = m_TokenList.at(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
-        arguments.push_back({ m_TokenList.at(m_Index).literal, type });
+        QMLExpression::Term::Type type = getToken(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
+        arguments.push_back({ getToken(m_Index).literal, type });
 
         advance(); // consume argument
     }
@@ -363,7 +363,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::predication()
     if (peek() != TokenType::RPAREN) {
         const std::string error_string = std::format("Expected ')' after argument list but got '{}'", getToken(m_Index).literal);
         m_Index = backtracking_point;
-        m_LookAhead = m_TokenList.at(m_Index).type;
+        m_LookAhead = getToken(m_Index).type;
         return std::unexpected(error_string);
     }
 
@@ -374,7 +374,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::predication()
 
 std::expected<QMLExpression::Expression, std::string> Parser::identity()
 {
-    if (peek() != TokenType::IDENTIFIER && peek() != TokenType::VARIABLE) {
+    if (!isTerm(peek())) {
         return std::unexpected("");
     }
 
@@ -382,18 +382,18 @@ std::expected<QMLExpression::Expression, std::string> Parser::identity()
         return std::unexpected("");
     }
 
-    if (peek(2) != TokenType::IDENTIFIER && peek(2) != TokenType::VARIABLE) {
+    if (!isTerm(peek(2))) {
         return std::unexpected(std::format("Expected singular term in RHS of '=' but got '{}'", getToken(m_Index + 2).literal));
     }
 
-    QMLExpression::Term::Type type = m_TokenList.at(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
-    QMLExpression::Term lhs(m_TokenList.at(m_Index).literal, type);
+    QMLExpression::Term::Type type = getToken(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
+    QMLExpression::Term lhs(getToken(m_Index).literal, type);
 
     advance(); // consume lhs
     advance(); // consume ID
 
-    type = m_TokenList.at(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
-    QMLExpression::Term rhs(m_TokenList.at(m_Index).literal, type);
+    type = getToken(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
+    QMLExpression::Term rhs(getToken(m_Index).literal, type);
 
     advance(); // consume rhs
 
@@ -402,7 +402,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::identity()
 
 std::expected<QMLExpression::Expression, std::string> Parser::inequality()
 {
-    if (peek() != TokenType::IDENTIFIER && peek() != TokenType::VARIABLE) {
+    if (!isTerm(peek())) {
         return std::unexpected("");
     }
 
@@ -410,18 +410,18 @@ std::expected<QMLExpression::Expression, std::string> Parser::inequality()
         return std::unexpected("");
     }
 
-    if (peek(2) != TokenType::IDENTIFIER && peek(2) != TokenType::VARIABLE) {
+    if (!isTerm(peek(2))) {
         return std::unexpected(std::format("Expected singular term in RHS of '≠' but got '{}'", getToken(m_Index + 1).literal));
     }
 
-    QMLExpression::Term::Type type = m_TokenList.at(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
-    QMLExpression::Term lhs(m_TokenList.at(m_Index).literal, type);
+    QMLExpression::Term::Type type = getToken(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
+    QMLExpression::Term lhs(getToken(m_Index).literal, type);
 
     advance(); // consume lhs
     advance(); // consume NEQ operator
 
-    type = m_TokenList.at(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
-    QMLExpression::Term rhs(m_TokenList.at(m_Index).literal, type);
+    type = getToken(m_Index).type == TokenType::VARIABLE ? QMLExpression::Term::Type::VARIABLE : QMLExpression::Term::Type::CONSTANT;
+    QMLExpression::Term rhs(getToken(m_Index).literal, type);
 
     advance(); // consume rhs
 
