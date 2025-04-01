@@ -160,19 +160,19 @@ std::vector<Token> lex(const std::string& formula)
          ***************/
 
         else if (c == '(') {
-            addToList("lparen", TokenType::LPAREN);
+            addToList("(", TokenType::LPAREN);
         }
         else if (c == ')') {
-            addToList("rparen", TokenType::RPAREN);
+            addToList(")", TokenType::RPAREN);
         }
         else if (c == '[') {
-            addToList("lbracket", TokenType::LBRACKET);
+            addToList("[", TokenType::LBRACKET);
         }
         else if (c == ']') {
-            addToList("rbracket", TokenType::RBRACKET);
+            addToList("]", TokenType::RBRACKET);
         }
         else if (c == ',') {
-            addToList("comma", TokenType::COMMA);
+            addToList(",", TokenType::COMMA);
         }
 
         /*********************
