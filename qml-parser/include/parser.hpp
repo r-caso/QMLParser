@@ -49,6 +49,8 @@ public:
     std::expected<QMLExpression::Expression, std::string> equivalence();
     std::expected<QMLExpression::Expression, std::string> implication();
     std::expected<QMLExpression::Expression, std::string> conjunction_disjunction();
+    std::expected<QMLExpression::Expression, std::string> clause();
+    std::expected<QMLExpression::Expression, std::string> quantificational();
     std::expected<QMLExpression::Expression, std::string> unary();
     std::expected<QMLExpression::Expression, std::string> atomic();
     std::expected<QMLExpression::Expression, std::string> predication();

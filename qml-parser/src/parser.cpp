@@ -121,7 +121,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::implication()
 
 std::expected<QMLExpression::Expression, std::string> Parser::conjunction_disjunction()
 {
-    const auto result = unary();
+    const auto result = clause();
     if (!result.has_value()) {
         return std::unexpected(result.error());
     }
@@ -137,7 +137,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::conjunction_disjun
 
         advance(); // consume operator
 
-        const auto result = unary();
+        const auto result = clause();
         if (!result.has_value()) {
             return std::unexpected(result.error());
         }
@@ -149,19 +149,40 @@ std::expected<QMLExpression::Expression, std::string> Parser::conjunction_disjun
     return lhs;
 }
 
-std::expected<QMLExpression::Expression, std::string> Parser::unary()
+std::expected<QMLExpression::Expression, std::string> Parser::clause()
 {
+    /**************
+     * TRY ATOMIC *
+     **************/
+
     if (const auto result = atomic(); result.has_value()) {
         return result.value();
     }
 
-    if (peek() == TokenType::NOT || peek() == TokenType::POS || peek() == TokenType::NEC) {
-        const auto op = m_TokenList.at(m_Index).type == TokenType::NOT ? m_MapToOperator(TokenType::NOT) :
-                        m_TokenList.at(m_Index).type == TokenType::POS ? m_MapToOperator(TokenType::POS) :
-                                                                         m_MapToOperator(TokenType::NEC);
+    /*************
+     * TRY UNARY *
+     *************/
 
-        if (!op.has_value()) {
-            return std::unexpected("Unrecognized unary operator.");
+    if (const auto result = unary(); result.has_value()) {
+        return result.value();
+    }
+    else {
+        if (!result.error().empty()) {
+            return std::unexpected(result.error());
+        }
+    }
+
+    /************************
+     * TRY QUANTIFICATIONAL *
+     ************************/
+
+    if (const auto result = quantificational(); result.has_value()) {
+        return result.value();
+    }
+    else {
+        if (!result.error().empty()) {
+            return std::unexpected(result.error());
+        }
         }
 
     /*******************
@@ -191,7 +212,16 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
         return std::make_shared<QMLExpression::UnaryNode>(*op, result.value());
     }
 
-    if ((peek() == TokenType::FORALL || peek() == TokenType::EXISTS || peek() == TokenType::NOT_EXISTS) && peek(1) == TokenType::VARIABLE) {
+std::expected<QMLExpression::Expression, std::string> Parser::quantificational()
+{
+    if (peek() != TokenType::FORALL && peek() != TokenType::EXISTS && peek() != TokenType::NOT_EXISTS) {
+        return std::unexpected("");
+    }
+
+    if (peek(1) != TokenType::VARIABLE) {
+        return std::unexpected("Expected variable after quantifier");
+    }
+
         QMLExpression::Quantifier quantifier = m_TokenList.at(m_Index).type == TokenType::FORALL ? QMLExpression::Quantifier::UNIVERSAL : QMLExpression::Quantifier::EXISTENTIAL;
         const bool negated = m_TokenList.at(m_Index).type == TokenType::NOT_EXISTS;
         
@@ -201,7 +231,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
         
         advance(); // consume variable
 
-        const auto result = unary();
+    const auto result = clause();
 
         if (!result.has_value()) {
             return std::unexpected(result.error());
@@ -219,11 +249,10 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
         return quantified;
     }
 
-    if (peek() == TokenType::LPAREN) {
-        advance();
-        const auto result = equivalence();
-        if (!result.has_value()) {
-            return std::unexpected(result.error());
+std::expected<QMLExpression::Expression, std::string> Parser::unary()
+{
+    if (peek() != TokenType::NOT && peek() != TokenType::POS && peek() != TokenType::NEC) {
+        return std::unexpected("");
         }
         if (peek() != TokenType::RPAREN) {
             return std::unexpected("Expected closing parenthesis");
@@ -232,9 +261,9 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
         return result.value();
     }
 
-    if (peek() == TokenType::LBRACKET) {
-        advance();
-        const auto result = equivalence();
+    advance(); // consume operator
+
+    const auto result = clause();
         if (!result.has_value()) {
             return std::unexpected(result.error());
         }
@@ -245,7 +274,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
         return result.value();
     }
 
-    return std::unexpected("Unexpected error in unary formula.");
+    return std::make_shared<QMLExpression::UnaryNode>(*op, result.value());
 }
 
 std::expected<QMLExpression::Expression, std::string> Parser::atomic()
