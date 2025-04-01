@@ -28,6 +28,9 @@ Parser::Parser(const std::vector<Token>& tokens, MappingFunction mapFunc)
  */
 std::expected<QMLExpression::Expression, std::string> Parser::parse(ParseFunction entryPoint)
 {
+    m_Index = 0;
+    m_LookAhead = m_TokenList.empty() ? TokenType::EOI : m_TokenList.at(0).type;
+
     m_EntryPoint = entryPoint;
 
     if (m_TokenList.empty()) {
