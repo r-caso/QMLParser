@@ -132,8 +132,7 @@ std::vector<Token> lex(const std::string& formula)
             operator_byte_array.push_back(curr);
         }
         else {
-            list.emplace_back("illegal", TokenType::ILLEGAL);
-            operator_byte_array.clear();
+            writeToTokenList(operator_byte_array, TokenType::ILLEGAL, list);
         }
     };
     const auto addToOpAndFlush = [&](uint8_t curr, uint8_t prev, TokenType type) -> void {
@@ -142,8 +141,7 @@ std::vector<Token> lex(const std::string& formula)
             writeToTokenList(operator_byte_array, type, list);
         }
         else {
-            list.emplace_back("illegal", TokenType::ILLEGAL);
-            operator_byte_array.clear();
+            writeToTokenList(operator_byte_array, TokenType::ILLEGAL, list);
         }
     };
 
@@ -245,14 +243,12 @@ std::vector<Token> lex(const std::string& formula)
                     writeToTokenList(operator_byte_array, TokenType::POS, list);
                     break;
                 default:
-                    list.emplace_back(Token("illegal", TokenType::ILLEGAL));
-                    operator_byte_array.clear();
+                    writeToTokenList(operator_byte_array, TokenType::ILLEGAL, list);
                     break;
                 }
             }
             else {
-                list.emplace_back(Token("illegal", TokenType::ILLEGAL));
-                operator_byte_array.clear();
+                writeToTokenList(operator_byte_array, TokenType::ILLEGAL, list);
             }
         }
 
@@ -307,13 +303,13 @@ std::vector<Token> lex(const std::string& formula)
         }
 
         else {
-            list.emplace_back(Token("illegal", TokenType::ILLEGAL));
+            list.emplace_back(Token(std::string(1, c), TokenType::ILLEGAL));
         }
     }
 
     flush(TokenType::ILLEGAL);
 
-    list.emplace_back("$", TokenType::EOI);
+    list.emplace_back("EOI", TokenType::EOI);
 
     return list;
 }
