@@ -1,4 +1,4 @@
-﻿/*
+/*
  * SPDX-FileCopyrightText: 2024-2025 Ramiro Caso <caso.ramiro@conicet.gov.ar>
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -193,7 +193,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::clause()
         if (!result.error().empty()) {
             return std::unexpected(result.error());
         }
-        }
+    }
 
     /*******************
      * TRY ENTRY_POINT *
@@ -224,9 +224,9 @@ std::expected<QMLExpression::Expression, std::string> Parser::clause()
         advance();
         return result.value();
     }
-        
+
     return std::unexpected(error_message);
-    }
+}
 
 std::expected<QMLExpression::Expression, std::string> Parser::quantificational()
 {
@@ -238,38 +238,38 @@ std::expected<QMLExpression::Expression, std::string> Parser::quantificational()
         return std::unexpected(std::format("Expected variable after quantifier but got '{}'", m_TokenList.at(m_Index + 1).literal));
     }
 
-        QMLExpression::Quantifier quantifier = m_TokenList.at(m_Index).type == TokenType::FORALL ? QMLExpression::Quantifier::UNIVERSAL : QMLExpression::Quantifier::EXISTENTIAL;
-        const bool negated = m_TokenList.at(m_Index).type == TokenType::NOT_EXISTS;
-        
-        advance(); // consume quantifier
+    QMLExpression::Quantifier quantifier = m_TokenList.at(m_Index).type == TokenType::FORALL ? QMLExpression::Quantifier::UNIVERSAL : QMLExpression::Quantifier::EXISTENTIAL;
+    const bool negated = m_TokenList.at(m_Index).type == TokenType::NOT_EXISTS;
 
-        QMLExpression::Term variable(m_TokenList.at(m_Index).literal, QMLExpression::Term::Type::VARIABLE);
-        
-        advance(); // consume variable
+    advance(); // consume quantifier
+
+    QMLExpression::Term variable(m_TokenList.at(m_Index).literal, QMLExpression::Term::Type::VARIABLE);
+
+    advance(); // consume variable
 
     const auto result = clause();
 
-        if (!result.has_value()) {
-            return std::unexpected(result.error());
-        }
-        
-        QMLExpression::Expression quantified = std::make_shared<QMLExpression::QuantificationNode>(quantifier, variable, result.value());
-
-        if (negated) {
-            if (const auto op = m_MapToOperator(TokenType::NOT)) {
-                return std::make_shared<QMLExpression::UnaryNode>(*op, quantified);
-            }
-        return std::unexpected("Non-existent map for token type NOT");
-        }
-        
-        return quantified;
+    if (!result.has_value()) {
+        return std::unexpected(result.error());
     }
+
+    QMLExpression::Expression quantified = std::make_shared<QMLExpression::QuantificationNode>(quantifier, variable, result.value());
+
+    if (negated) {
+        if (const auto op = m_MapToOperator(TokenType::NOT)) {
+            return std::make_shared<QMLExpression::UnaryNode>(*op, quantified);
+        }
+        return std::unexpected("Non-existent map for token type NOT");
+    }
+
+    return quantified;
+}
 
 std::expected<QMLExpression::Expression, std::string> Parser::unary()
 {
     if (peek() != TokenType::NOT && peek() != TokenType::POS && peek() != TokenType::NEC) {
         return std::unexpected("");
-        }
+    }
 
     const auto op = m_TokenList.at(m_Index).type == TokenType::NOT ? m_MapToOperator(TokenType::NOT) :
         m_TokenList.at(m_Index).type == TokenType::POS ? m_MapToOperator(TokenType::POS) :
@@ -277,14 +277,14 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
 
     if (!op.has_value()) {
         return std::unexpected(std::format("Non-existent map for unary operator {}", m_TokenList.at(m_Index).literal));
-        }
+    }
 
     advance(); // consume operator
 
     const auto result = clause();
-        if (!result.has_value()) {
+    if (!result.has_value()) {
         return std::unexpected("Expected clause after unary operator");
-        }
+    }
 
     return std::make_shared<QMLExpression::UnaryNode>(*op, result.value());
 }
