@@ -60,6 +60,7 @@ public:
 private:
     void advance();
     TokenType peek(int offset = 0) const;
+    const Token& getToken(size_t index) const;
 
     // start rule
     std::expected<QMLExpression::Expression, std::string> sentence();
