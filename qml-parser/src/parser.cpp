@@ -62,7 +62,7 @@ void Parser::advance()
 {
     if (m_LookAhead != TokenType::EOI) {
         m_Index++;
-        m_LookAhead = m_Index < m_TokenList.size() ? m_TokenList.at(m_Index).type : TokenType::EOI;
+        m_LookAhead = m_TokenList.at(m_Index).type;
     }
 }
 
@@ -117,7 +117,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::equivalence()
         }
         else {
             return std::unexpected("Non-existent map for token type EQ (↔)");
-    }
+        }
     }
 
     return lhs;
@@ -144,7 +144,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::implication()
         }
         else {
             return std::unexpected("Non-existent map for token type IMP (→)");
-    }
+        }
     }
 
     return lhs;
@@ -184,14 +184,14 @@ std::expected<QMLExpression::Expression, std::string> Parser::conjunction_disjun
 std::expected<QMLExpression::Expression, std::string> Parser::clause()
 {
     const auto currentToken = getToken(m_Index);
-
+    
     if (isTerm(currentToken.type)) {
         return atomic();
     }
 
     if (isUnaryOperator(currentToken.type)) {
         return unary();
-        }
+    }
 
     if (isQuantifier(currentToken.type)) {
         return quantificational();
@@ -272,7 +272,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
     const auto currentToken = getToken(m_Index);
     const auto op = currentToken.type == TokenType::NOT ? m_MapToOperator(TokenType::NOT) :
                     currentToken.type == TokenType::POS ? m_MapToOperator(TokenType::POS) :
-        m_MapToOperator(TokenType::NEC);
+                                                          m_MapToOperator(TokenType::NEC);
     const std::string opName = currentToken.type == TokenType::NOT ? "NOT (¬)" :
                                currentToken.type == TokenType::POS ? "POS (⋄)" :
                                                                      "NEC (□)";
@@ -300,15 +300,15 @@ std::expected<QMLExpression::Expression, std::string> Parser::atomic()
     if (peek(1) == TokenType::LPAREN) {
         return predication();
     }
-
+    
     if (peek(1) == TokenType::ID) {
         return identity();
     }
-
+    
     if (peek(1) == TokenType::NEQ) {
         return inequality();
     }
-
+    
     return std::unexpected(std::format("Expected '(', '=', or '≠' after '{}' but got '{}'", getToken(m_Index).literal, getToken(m_Index + 1).literal));
 }
 
