@@ -96,7 +96,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::equivalence()
         }
         QMLExpression::Expression rhs = result.value();
         if (const auto op = m_MapToOperator(TokenType::EQ)) {
-            return std::make_shared<QMLExpression::BinaryNode>(*op, lhs, rhs);
+            lhs = std::make_shared<QMLExpression::BinaryNode>(*op, lhs, rhs);
         }
         return std::unexpected("Unrecognized binary operator");
     }
@@ -121,7 +121,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::implication()
         }
         QMLExpression::Expression rhs = result.value();
         if (const auto op = m_MapToOperator(TokenType::IF)) {
-            return std::make_shared<QMLExpression::BinaryNode>(*op, lhs, rhs);
+            lhs = std::make_shared<QMLExpression::BinaryNode>(*op, lhs, rhs);
         }
         return std::unexpected("Unrecognized binary operator.");
     }
@@ -153,7 +153,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::conjunction_disjun
         }
 
         QMLExpression::Expression rhs = result.value();
-        return std::make_shared<QMLExpression::BinaryNode>(*op, lhs, rhs);
+        lhs = std::make_shared<QMLExpression::BinaryNode>(*op, lhs, rhs);
     }
 
     return lhs;
