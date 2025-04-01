@@ -10,6 +10,23 @@
 
 namespace iif_sadaf::talk::QMLParser {
 
+namespace {
+    bool isTerm(TokenType type)
+    {
+        return type == TokenType::VARIABLE || type == TokenType::IDENTIFIER;
+    }
+
+    bool isUnaryOperator(TokenType type)
+    {
+        return type == TokenType::NOT || type == TokenType::NEC || type == TokenType::POS;
+    }
+
+    bool isQuantifier(TokenType type)
+    {
+        return type == TokenType::FORALL || type == TokenType::EXISTS || type == TokenType::NOT_EXISTS;
+    }
+}
+
 /**
  * @brief Constructs a Parser instance.
  * @param tokens The list of tokens to parse.
@@ -153,12 +170,10 @@ std::expected<QMLExpression::Expression, std::string> Parser::conjunction_disjun
         }
 
         advance(); // consume operator
-
         const auto result = clause();
         if (!result.has_value()) {
             return std::unexpected(std::format("Expected clause after '{}' but got : {}", currentToken.literal, result.error()));
         }
-
         QMLExpression::Expression rhs = result.value();
         lhs = std::make_shared<QMLExpression::BinaryNode>(*op, lhs, rhs);
     }
@@ -168,55 +183,21 @@ std::expected<QMLExpression::Expression, std::string> Parser::conjunction_disjun
 
 std::expected<QMLExpression::Expression, std::string> Parser::clause()
 {
-    /**************
-     * TRY ATOMIC *
-     **************/
+    const auto currentToken = getToken(m_Index);
 
-    std::string error_message;
-
-    if (const auto result = atomic(); result.has_value()) {
-        return result.value();
+    if (isTerm(currentToken.type)) {
+        return atomic();
     }
-    else {
-        if (!result.error().empty()) {
-            return std::unexpected(result.error());
+
+    if (isUnaryOperator(currentToken.type)) {
+        return unary();
         }
-        else {
-            error_message += std::format("Expected '(', '[', '=' or '≠' after identifier '{}', but got '{}'", m_TokenList.at(m_Index).literal, m_TokenList.at(m_Index + 1).literal);
-        }
+
+    if (isQuantifier(currentToken.type)) {
+        return quantificational();
     }
 
-    /*************
-     * TRY UNARY *
-     *************/
-
-    if (const auto result = unary(); result.has_value()) {
-        return result.value();
-    }
-    else {
-        if (!result.error().empty()) {
-            return std::unexpected(result.error());
-        }
-    }
-
-    /************************
-     * TRY QUANTIFICATIONAL *
-     ************************/
-
-    if (const auto result = quantificational(); result.has_value()) {
-        return result.value();
-    }
-    else {
-        if (!result.error().empty()) {
-            return std::unexpected(result.error());
-        }
-    }
-
-    /*******************
-     * TRY ENTRY_POINT *
-     *******************/
-
-    if (peek() == TokenType::LPAREN) {
+    if (currentToken.type == TokenType::LPAREN) {
         advance();
         const auto result = m_EntryPoint(*this);
         if (!result.has_value()) {
@@ -229,7 +210,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::clause()
         return result.value();
     }
 
-    if (peek() == TokenType::LBRACKET) {
+    if (currentToken.type == TokenType::LBRACKET) {
         advance();
         const auto result = m_EntryPoint(*this);
         if (!result.has_value()) {
@@ -284,7 +265,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::quantificational()
 
 std::expected<QMLExpression::Expression, std::string> Parser::unary()
 {
-    if (peek() != TokenType::NOT && peek() != TokenType::POS && peek() != TokenType::NEC) {
+    if (!isUnaryOperator(peek())) {
         return std::unexpected("");
     }
 
@@ -297,7 +278,7 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
                                                                      "NEC (□)";
 
     if (!op.has_value()) {
-        return std::unexpected(std::format("Non-existent map for unary operator {}", m_TokenList.at(m_Index).literal));
+        return std::unexpected(std::format("Non-existent map for unary operator {}", opName));
     }
 
     advance(); // consume operator
@@ -312,27 +293,20 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
 
 std::expected<QMLExpression::Expression, std::string> Parser::atomic()
 {
-    std::string error_message;
-
-    if (const auto result = predication(); result.has_value()) {
-        return result.value();
-    }
-    else {
-        error_message += result.error();
+    if (peek() != TokenType::IDENTIFIER && peek() != TokenType::VARIABLE) {
+        return std::unexpected("");
     }
 
-    if (const auto result = identity(); result.has_value()) {
-        return result.value();
-    }
-    else {
-        error_message += result.error();
+    if (peek(1) == TokenType::LPAREN) {
+        return predication();
     }
 
-    if (const auto result = inequality(); result.has_value()) {
-        return result.value();
+    if (peek(1) == TokenType::ID) {
+        return identity();
     }
-    else {
-        error_message += result.error();
+
+    if (peek(1) == TokenType::NEQ) {
+        return inequality();
     }
 
     return std::unexpected(std::format("Expected '(', '=', or '≠' after '{}' but got '{}'", getToken(m_Index).literal, getToken(m_Index + 1).literal));
