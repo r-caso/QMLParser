@@ -40,7 +40,7 @@ void Parser::advance()
 {
     if (m_LookAhead != TokenType::EOI) {
         m_Index++;
-        m_LookAhead = m_TokenList.at(m_Index).type;
+        m_LookAhead = m_Index < m_TokenList.size() ? m_TokenList.at(m_Index).type : TokenType::EOI;
     }
 }
 
