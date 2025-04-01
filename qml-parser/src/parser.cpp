@@ -57,6 +57,13 @@ TokenType Parser::peek(int offset) const
     return TokenType::EOI;
 }
 
+const Token& Parser::getToken(size_t index) const {
+    if (index < m_TokenList.size()) {
+        return m_TokenList.at(index);
+    }
+    return m_TokenList.at(m_TokenList.size() - 1);
+}
+
 std::expected<QMLExpression::Expression, std::string> Parser::sentence()
 {
     const auto result = m_EntryPoint(*this);
