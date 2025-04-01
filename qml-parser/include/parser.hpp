@@ -60,12 +60,13 @@ private:
     TokenType peek(int offset = 0) const;
 
     // start rule
-    std::expected<QMLExpression::Expression, std::string> sentence(ParseFunction entryPoint = &Parser::equivalence);
+    std::expected<QMLExpression::Expression, std::string> sentence();
 
     int m_Index;
     TokenType m_LookAhead;
     std::vector<Token> m_TokenList;
     std::function<std::optional<QMLExpression::Operator>(TokenType)> m_MapToOperator;
+    ParseFunction m_EntryPoint = &Parser::equivalence;
 };
 
 std::expected<QMLExpression::Expression, std::string> parse(const std::string& formula, Parser::ParseFunction entryPoint = &Parser::equivalence, Parser::MappingFunction mappingFunction = &mapToAlethicOperator);

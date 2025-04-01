@@ -26,11 +26,13 @@ Parser::Parser(const std::vector<Token>& tokens, MappingFunction mapFunc)
  */
 std::expected<QMLExpression::Expression, std::string> Parser::parse(ParseFunction entryPoint)
 {
+    m_EntryPoint = entryPoint;
+
     if (m_TokenList.empty()) {
         return std::unexpected("Empty input string, nothing to do");
     }
 
-    return sentence(entryPoint);
+    return sentence();
 }
 
 
@@ -50,11 +52,11 @@ TokenType Parser::peek(int offset) const
     return TokenType::EOI;
 }
 
-std::expected<QMLExpression::Expression, std::string> Parser::sentence(ParseFunction entryPoint)
+std::expected<QMLExpression::Expression, std::string> Parser::sentence()
 {
     m_LookAhead = peek();
 
-    const auto result = entryPoint(*this);
+    const auto result = m_EntryPoint(*this);
 
     if (!result.has_value()) {
         return std::unexpected(result.error());
@@ -162,9 +164,26 @@ std::expected<QMLExpression::Expression, std::string> Parser::unary()
             return std::unexpected("Unrecognized unary operator.");
         }
 
-        advance(); // consume operator
+    /*******************
+     * TRY ENTRY_POINT *
+     *******************/
 
-        const auto result = unary();
+    if (peek() == TokenType::LPAREN) {
+        advance();
+        const auto result = m_EntryPoint(*this);
+        if (!result.has_value()) {
+            return std::unexpected(result.error());
+        }
+        if (peek() != TokenType::RPAREN) {
+            return std::unexpected(std::format("Expected closing parenthesis but got {}", m_TokenList.at(m_Index).literal));
+        }
+        advance();
+        return result.value();
+    }
+
+    if (peek() == TokenType::LBRACKET) {
+        advance();
+        const auto result = m_EntryPoint(*this);
         if (!result.has_value()) {
             return std::unexpected(result.error());
         }
